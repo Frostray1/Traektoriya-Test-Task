@@ -1,43 +1,66 @@
-.header{
-    height: 5em;
-    margin-bottom: 2em;
+.header {
+	height: 5em;
+	margin-bottom: 2em;
 }
 
-
-
 .grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);;
-    grid-gap: 20px;
-  }
-  
-  .card {
-    background-color: #fff;
-    border-radius: 4px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    margin-bottom: 20px;
-  
-    h3 {
-      font-size: 20px;
-      margin-bottom: 10px;
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	grid-gap: 1em;
+}
+
+.card {
+  min-width: 300px;
+	background-color: #fff;
+	border-radius: 4px;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+	padding: 20px;
+	margin-bottom: 20px;
+
+	h3 {
+		font-size: 20px;
+    margin: 0;
+	}
+
+	p {
+		margin-bottom: 5px;
+	}
+	.cardHeader {
+		display: flex;
+    align-items:center;
+    margin-bottom: 1em;
+		svg {
+			font-size: 20px;
+			margin-left: auto;
+      display: none;
+      cursor: pointer;
+      transition: color 0.3s;
+      &:hover{
+        color:red;
+      }
+		}
+	}
+  &:hover{
+    svg{
+      display: block;
     }
-  
-    p {
-      margin-bottom: 5px;
-    }
   }
-  
-  .sortDropdown{
-    margin-top: 2em;
-    float: right;
-  }
-  .sortButton{
-    width: 100%;
-    border: none;
-    background:transparent;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-   
-  }
+}
+
+.sortDropdown {
+	margin-top: 2em;
+	float: right;
+}
+.sortButton {
+	width: 100%;
+	border: none;
+	background: transparent;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.input{
+  border:none;
+  cursor: pointer;
+}
