@@ -1,9 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import styles from './Home.module.scss';
-import axios from 'axios';
 import { Dropdown } from 'react-bootstrap';
 import { AiOutlineArrowDown, AiOutlineArrowUp } from 'react-icons/ai';
 import { MdDelete } from 'react-icons/md';
+import { fetchData } from '../hooks/useApi';
+import {
+	updateModelCard,
+	updateNameCard,
+	updatePriceCard
+} from '../hooks/useUpdateCard';
 
 const Home = () => {
 	const [objects, setObjects] = useState([]);
@@ -11,18 +16,23 @@ const Home = () => {
 	const [sortDirection, setSortDirection] = useState('asc');
 
 	useEffect(() => {
-		fetchData();
+		fetchData()
+			.then(result => setObjects(result))
+			.catch(error => console.error('Error fetching data:', error));
 	}, []);
 
-	const fetchData = async () => {
-		try {
-			const response = await axios.get(
-				'https://test.tspb.su/test-task/vehicles'
-			);
-			setObjects(response.data);
-		} catch (error) {
-			console.error('Error fetching data:', error);
-		}
+	const updateName = (id, newName) => {
+		setObjects(updateNameCard(objects, id, newName));
+	};
+	const updatePrice = (id, newPrice) => {
+		setObjects(updatePriceCard(objects, id, newPrice));
+	};
+	const updateModel = (id, newModel) => {
+		setObjects(updateModelCard(objects, id, newModel));
+	};
+	const deleteCard = (id) => {
+		const updatedObjects = objects.filter(object => object.id !== id);
+		setObjects(updatedObjects);
 	};
 
 	const handleSort = type => {
@@ -34,52 +44,21 @@ const Home = () => {
 		}
 	};
 
-	const sortedObjects = objects.sort((a, b) => {
-		if (sortType === 'year') {
-			return sortDirection === 'asc' ? a.year - b.year : b.year - a.year;
-		} else if (sortType === 'price') {
-			return sortDirection === 'asc'
-				? a.price - b.price
-				: b.price - a.price;
-		}
-		return 0;
-	});
-
-	const deleteCard = id => {
-		const updatedObjects = objects.filter(object => object.id !== id);
-		setObjects(updatedObjects);
-	};
-
-	const updateName = (id, newName) => {
-		const updatedObjects = objects.map(object => {
-			if (object.id === id) {
-				return { ...object, name: newName };
+	const sortedObjects =
+		objects.length > 0 &&
+		objects.sort((a, b) => {
+			if (sortType === 'year') {
+				return sortDirection === 'asc'
+					? a.year - b.year
+					: b.year - a.year;
+			} else if (sortType === 'price') {
+				return sortDirection === 'asc'
+					? a.price - b.price
+					: b.price - a.price;
 			}
-			return object;
+			return 0;
 		});
-		setObjects(updatedObjects);
-	};
 
-	const updatePrice = (id, newPrice) => {
-		const updatedObjects = objects.map(object => {
-			if (object.id === id) {
-				return { ...object, price: newPrice };
-			}
-			return object;
-		});
-		setObjects(updatedObjects);
-	};
-	const updateModel = (id, newModel) => {
-		const updatedObjects = objects.map(object => {
-			if (object.id === id) {
-				return { ...object, model: newModel };
-			}
-			return object;
-		});
-		setObjects(updatedObjects);
-	};
-
-	// console.log(objects);
 	return (
 		<div>
 			<div className={styles.header}>
@@ -121,43 +100,55 @@ const Home = () => {
 				</Dropdown>
 			</div>
 			<div className={styles.grid}>
-				{sortedObjects.map(object => (
-					<div key={object.id} className={styles.card}>
-						<div className={styles.cardHeader}>
-							<h3>
-								<input
-									className={styles.input}
-									type='text'
-									value={object.name || ''}
-									onChange={e =>
-										updateName(object.id, e.target.value)
-									}
+				{sortedObjects &&
+					sortedObjects.map(object => (
+						<div key={object.id} className={styles.card}>
+							<div className={styles.cardHeader}>
+								<h3>
+									<input
+										className={styles.input}
+										type='text'
+										value={object.name || ''}
+										onChange={e =>
+											updateName(
+												object.id,
+												e.target.value
+											)
+										}
+									/>
+								</h3>
+
+								<MdDelete
+									onClick={() => deleteCard(object.id)}
 								/>
-							</h3>
+							</div>
 
-							<MdDelete onClick={() => deleteCard(object.id)} />
-						</div>
-
-						<p>Model: <input
+							<p>
+								Model:{' '}
+								<input
 									className={styles.input}
 									type='text'
 									value={object.model || ''}
 									onChange={e =>
 										updateModel(object.id, e.target.value)
 									}
-								/></p>
-						<p>Price: <input
+								/>
+							</p>
+							<p>
+								Price:{' '}
+								<input
 									className={styles.input}
 									type='number'
 									value={object.price || ''}
 									onChange={e =>
 										updatePrice(object.id, e.target.value)
 									}
-								/></p>
-						<p>Year: {object.year}</p>
-						<p>Color: {object.color}</p>
-					</div>
-				))}
+								/>
+							</p>
+							<p>Year: {object.year}</p>
+							<p>Color: {object.color}</p>
+						</div>
+					))}
 			</div>
 		</div>
 	);
