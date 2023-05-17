@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import styles from './Home.module.scss';
-import { Dropdown } from 'react-bootstrap';
-import { AiOutlineArrowDown, AiOutlineArrowUp } from 'react-icons/ai';
 import { MdDelete } from 'react-icons/md';
 import { fetchData } from '../hooks/useApi';
 import {
@@ -9,6 +7,8 @@ import {
 	updateNameCard,
 	updatePriceCard
 } from '../hooks/useUpdateCard';
+import SortDropdown from '../components/SortDropdown/SortDropdown';
+import Map from '../components/Map/Map';
 
 const Home = () => {
 	const [objects, setObjects] = useState([]);
@@ -62,42 +62,11 @@ const Home = () => {
 	return (
 		<div>
 			<div className={styles.header}>
-				<Dropdown className={styles.sortDropdown} autoClose='outside'>
-					<Dropdown.Toggle id='dropdown-autoclose-outside'>
-						Сортировать по
-					</Dropdown.Toggle>
-
-					<Dropdown.Menu>
-						<Dropdown.Item>
-							<button
-								className={styles.sortButton}
-								onClick={() => handleSort('year')}
-							>
-								Году
-								{sortType === 'year' &&
-								sortDirection === 'asc' ? (
-									<AiOutlineArrowUp />
-								) : (
-									<AiOutlineArrowDown />
-								)}
-							</button>
-						</Dropdown.Item>
-						<Dropdown.Item>
-							<button
-								className={styles.sortButton}
-								onClick={() => handleSort('price')}
-							>
-								Цене
-								{sortType === 'price' &&
-								sortDirection === 'asc' ? (
-									<AiOutlineArrowUp />
-								) : (
-									<AiOutlineArrowDown />
-								)}
-							</button>
-						</Dropdown.Item>
-					</Dropdown.Menu>
-				</Dropdown>
+				<SortDropdown
+					handleSort={handleSort}
+					sortType={sortType}
+					sortDirection={sortDirection}
+				/>
 			</div>
 			<div className={styles.grid}>
 				{sortedObjects &&
@@ -150,6 +119,7 @@ const Home = () => {
 						</div>
 					))}
 			</div>
+			<Map objects={sortedObjects} />
 		</div>
 	);
 };
