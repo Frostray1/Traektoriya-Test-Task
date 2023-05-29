@@ -18,7 +18,6 @@ const SortDropdown = ({ onSortData }) => {
     const direction = sortState[type] === 'asc' ? 'desc' : 'asc';
 
     setSortState((prev) => ({ ...prev, [type]: direction }));
-    // обновляем данные после сортировки
     onSortData(type, direction);
   };
 
